@@ -125,8 +125,8 @@ Main database tables include:
 | Orders | Order information |
 | OrderItems | Products and quantities within orders |
 | Discounts | Product discount information |
-| Product Color |
-| Product Sizes |
+| Product Color | Connects products with their available colors |
+| Product Sizes | Connects products with their available sizes |
 
 ## 5. REST API Endpoints
 
