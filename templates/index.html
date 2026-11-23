@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub | Clothing Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="announcement-bar">Free shipping on orders over €100</div>
+
+    <!-- Navigation -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">STYLE<span>HUB</span></a>
+
+            <nav class="navigation">
+                <a href="#home">Home</a>
+                <a href="#products">Shop</a>
+                <a href="#categories">Categories</a>
+                <a href="#about">About</a>
+                <a href="#my-orders" id="myOrdersLink">My Orders</a>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="nav-icon" id="searchToggle" title="Search">
+                    <i class="icon-search"></i>
+                </button>
+                <button class="nav-icon account-button" id="loginButton" title="Account">
+                    <i class="icon-user"></i>
+                    <span id="accountUsername"></span>
+                </button>
+                <button class="nav-icon cart-button" id="cartButton" title="Shopping Cart">
+                    <i class="icon-bag"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart -->
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <div>
+                <span class="cart-subtitle">YOUR SELECTION</span>
+                <h2>Shopping Bag</h2>
+            </div>
+            <button class="close-cart" id="closeCart">&times;</button>
+        </div>
+
+        <div class="cart-items" id="cartItems"></div>
+
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <span>Subtotal</span>
+                <strong id="cartTotal">€0.00</strong>
+            </div>
+            <p class="cart-shipping">Shipping and taxes calculated at checkout.</p>
+            <button class="checkout-button" id="checkoutButton">
+                PROCEED TO CHECKOUT <span>&rarr;</span>
+            </button>
+            <button class="continue-shopping" id="continueShopping">Continue Shopping</button>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- Checkout -->
+    <div class="checkout-overlay" id="checkoutOverlay">
+        <div class="checkout-modal">
+            <div class="checkout-header">
+                <div>
+                    <span class="cart-subtitle">STYLEHUB CHECKOUT</span>
+                    <h2>Complete Your Order</h2>
+                </div>
+                <button type="button" id="closeCheckout">&times;</button>
+            </div>
+
+            <form id="checkoutForm">
+                <div class="checkout-section">
+                    <h3>Contact Information</h3>
+                    <div class="checkout-fields">
+                        <div class="checkout-field">
+                            <label for="checkoutFirstName">First Name</label>
+                            <input type="text" id="checkoutFirstName" required placeholder="First name">
+                        </div>
+                        <div class="checkout-field">
+                            <label for="checkoutLastName">Last Name</label>
+                            <input type="text" id="checkoutLastName" required placeholder="Last name">
+                        </div>
+                        <div class="checkout-field">
+                            <label for="checkoutEmail">Email</label>
+                            <input type="email" id="checkoutEmail" required placeholder="Email address">
+                        </div>
+                        <div class="checkout-field">
+                            <label for="checkoutPhone">Phone</label>
+                            <input type="tel" id="checkoutPhone" required placeholder="+389 70 123 456">
+                        </div>
+                        <div class="checkout-field full-width">
+                            <label for="checkoutAddress">Delivery Address</label>
+                            <textarea id="checkoutAddress" required rows="3" placeholder="Street, city and country"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-section">
+                    <h3>Order Summary</h3>
+                    <div id="checkoutSummary"></div>
+                    <div class="checkout-final-total">
+                        <span>Total</span>
+                        <strong id="checkoutTotal">€0.00</strong>
+                    </div>
+                </div>
+
+                <button type="submit" class="place-order-button">
+                    PLACE ORDER <span>&rarr;</span>
+                </button>
+                <p class="checkout-note">Please review your information before placing your order.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Confirmation -->
+    <div class="confirmation-overlay" id="confirmationOverlay">
+        <div class="confirmation-modal">
+            <div class="confirmation-icon">&#10003;</div>
+            <span class="cart-subtitle">STYLEHUB</span>
+            <h2>Thank You for Your Order!</h2>
+            <p class="confirmation-message">Your order has been successfully placed.</p>
+
+            <div class="confirmation-order-number">
+                <span>ORDER NUMBER</span>
+                <strong id="confirmationOrderId">#0</strong>
+            </div>
+
+            <div class="confirmation-details">
+                <div class="confirmation-detail-row">
+                    <span>Order Date</span>
+                    <strong id="confirmationDate"></strong>
+                </div>
+                <div class="confirmation-detail-row">
+                    <span>Customer</span>
+                    <strong id="confirmationCustomer"></strong>
+                </div>
+                <div class="confirmation-detail-row">
+                    <span>Order Status</span>
+                    <span class="pending-status" id="confirmationStatus">Pending</span>
+                </div>
+            </div>
+
+            <div class="confirmation-products">
+                <h3>Order Summary</h3>
+                <div id="confirmationItems"></div>
+            </div>
+
+            <div class="confirmation-total">
+                <span>Total Paid</span>
+                <strong id="confirmationTotal">€0.00</strong>
+            </div>
+
+            <button type="button" id="continueAfterOrder">
+                CONTINUE SHOPPING <span>&rarr;</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-container" id="searchContainer">
+        <input type="text" id="searchInput" placeholder="Search for products...">
+        <button id="searchButton">Search</button>
+    </div>
+
+    <!-- Home -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <p class="hero-subtitle">NEW COLLECTION 2026</p>
+            <h1>Discover Your<br>Own Style.</h1>
+            <p class="hero-description">
+                Explore timeless pieces and modern essentials
+                designed to make every moment stylish.
+            </p>
+            <a href="#products" class="hero-button">SHOP NOW</a>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories-section" id="categories">
+        <div class="section-heading">
+            <p class="section-subtitle">EXPLORE OUR COLLECTION</p>
+            <h2>Shop By Category</h2>
+        </div>
+
+        <div class="category-grid">
+            <div class="category-card" data-category="Shirts">
+                <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600" alt="Shirts">
+                <div class="category-overlay">
+                    <h3>Shirts</h3>
+                    <span>EXPLORE</span>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="Pants">
+                <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=600" alt="Pants">
+                <div class="category-overlay">
+                    <h3>Pants</h3>
+                    <span>EXPLORE</span>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="Jackets">
+                <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600" alt="Jackets">
+                <div class="category-overlay">
+                    <h3>Jackets</h3>
+                    <span>EXPLORE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products -->
+    <section class="products-section" id="products">
+        <div class="section-heading">
+            <p class="section-subtitle">FIND YOUR FAVORITES</p>
+            <h2>Our Products</h2>
+            <p>Discover the latest additions to our collection.</p>
+        </div>
+
+        <div class="filter-container">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="Shirts">Shirts</option>
+                <option value="Pants">Pants</option>
+                <option value="Jackets">Jackets</option>
+                <option value="Dresses">Dresses</option>
+                <option value="Shoes">Shoes</option>
+            </select>
+
+            <select id="genderFilter">
+                <option value="">All Genders</option>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
+                <option value="Children">Children</option>
+            </select>
+
+            <select id="brandFilter">
+                <option value="">All Brands</option>
+                <option value="Nike">Nike</option>
+                <option value="Adidas">Adidas</option>
+                <option value="Zara">Zara</option>
+                <option value="Tommy Hilfiger">Tommy Hilfiger</option>
+            </select>
+
+            <select id="sortFilter">
+                <option value="">Sort By</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="name_asc">Name: A to Z</option>
+            </select>
+        </div>
+
+        <div class="product-management-toolbar" id="productManagementToolbar">
+            <button type="button" id="addProductButton">+ ADD NEW PRODUCT</button>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+            <p class="loading-message">Loading products...</p>
+        </div>
+    </section>
+
+    <!-- Add Product -->
+    <div class="product-modal-overlay" id="productModalOverlay">
+        <div class="product-modal">
+            <div class="product-modal-header">
+                <div>
+                    <span class="cart-subtitle">STYLEHUB MANAGEMENT</span>
+                    <h2 id="productModalTitle">Add New Product</h2>
+                </div>
+                <button type="button" id="closeProductModal">&times;</button>
+            </div>
+
+            <form id="addProductForm">
+    <div class="product-form-grid">
+
+        <div class="product-form-field">
+            <label for="productName">Product Name</label>
+            <input type="text" id="productName" required>
+        </div>
+
+        <div class="product-form-field">
+            <label for="productBrand">Brand</label>
+            <select id="productBrand" required>
+                <option value="">Select Brand</option>
+            </select>
+        </div>
+
+        <div class="product-form-field">
+            <label for="productCategory">Category</label>
+            <select id="productCategory" required>
+                <option value="">Select Category</option>
+            </select>
+        </div>
+
+        <div class="product-form-field">
+            <label for="productGender">Gender</label>
+            <select id="productGender" required>
+                <option value="">Select Gender</option>
+            </select>
+        </div>
+
+        <div class="product-form-field">
+            <label for="productPrice">Price (€)</label>
+            <input type="number" id="productPrice" min="0.01" step="0.01" required>
+        </div>
+
+        <div class="product-form-field">
+            <label for="productQuantity">Quantity</label>
+            <input type="number" id="productQuantity" min="0" required>
+        </div>
+
+        <div class="product-form-field">
+            <label for="productSizes">Sizes</label>
+            <select id="productSizes" multiple required></select>
+        </div>
+
+        <div class="product-form-field">
+            <label for="productColors">Colors</label>
+            <select id="productColors" multiple required></select>
+        </div>
+
+        <div class="product-form-field full-width">
+            <label for="productDescription">Description</label>
+            <textarea id="productDescription" rows="4" required></textarea>
+        </div>
+
+    </div>
+
+    <p id="productFormError" class="product-form-error"></p>
+    <button type="submit" class="save-product-button" id="saveProductButton">
+    SAVE PRODUCT
+</button>
+</form>
+        </div>
+    </div>
+
+    <!-- About -->
+    <section class="about-section" id="about">
+        <div class="about-content">
+            <p class="section-subtitle">ABOUT STYLEHUB</p>
+            <h2>Style That Speaks For You.</h2>
+            <p>
+                At StyleHub, we believe that fashion is more than clothing.
+                It is a way to express your personality, confidence and individuality.
+            </p>
+        </div>
+    </section>
+
+    <!-- My Orders -->
+    <section class="my-orders-section" id="my-orders">
+        <div class="section-heading">
+            <span class="section-subtitle">YOUR ACCOUNT</span>
+            <h2>My Orders</h2>
+            <p>Keep track of your purchases and order status.</p>
+        </div>
+        <div id="myOrdersContainer"></div>
+    </section>
+<!-- Order Management -->
+<section class="my-orders-section" id="orderManagement">
+    <div class="section-heading">
+        <span class="section-subtitle">STYLEHUB MANAGEMENT</span>
+        <h2>Order Management</h2>
+        <p>View customer orders and update their status.</p>
+    </div>
+
+    <div id="allOrdersContainer"></div>
+</section>
+    <!-- Dashboard -->
+    <section class="dashboard-section" id="dashboard">
+        <div class="section-heading">
+            <span class="section-subtitle">STYLEHUB ACCOUNT</span>
+            <h2>My Dashboard</h2>
+            <p id="dashboardWelcome">Welcome to your account.</p>
+        </div>
+        <div class="dashboard-grid" id="dashboardContent"></div>
+        <button type="button" id="logoutButton" class="logout-button">SIGN OUT</button>
+    </section>
+
+    <!-- Reports -->
+    <section class="reports-section" id="reports">
+        <div class="section-heading">
+            <span class="section-subtitle">STORE ANALYTICS</span>
+            <h2>Sales Reports</h2>
+            <p>Monitor store performance, earnings and product sales.</p>
+        </div>
+
+        <div class="reports-grid">
+            <div class="report-card">
+                <div class="report-card-header">
+                    <h3>Daily Earnings</h3>
+                    <span>DAILY</span>
+                </div>
+                <div id="dailyReports"></div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-card-header">
+                    <h3>Monthly Earnings</h3>
+                    <span>MONTHLY</span>
+                </div>
+                <div id="monthlyReports"></div>
+            </div>
+
+            <div class="report-card top-products-card">
+                <div class="report-card-header">
+                    <h3>Top-Selling Products</h3>
+                    <span>TOP 10</span>
+                </div>
+                <div id="topProductsReports"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Management -->
+    <section class="users-section" id="users">
+        <div class="section-heading">
+            <span class="section-subtitle">ADMINISTRATION</span>
+            <h2>User Management</h2>
+            <p>View registered users and manage their account roles.</p>
+        </div>
+
+        <div class="users-table-container">
+            <div class="users-table-header">
+                <h3>Registered Users</h3>
+                <button type="button" id="addUserButton">ADD USER</button>
+                <button type="button" id="refreshUsers">REFRESH USERS</button>
+            </div>
+            <div id="usersContainer"></div>
+            <div id="addUserForm" style="display:none;">
+    <h3>Add New User</h3>
+
+    <input type="text" id="newUsername" placeholder="Username">
+    <input type="email" id="newEmail" placeholder="Email">
+    <input type="password" id="newPassword" placeholder="Password">
+
+    <select id="newUserRole">
+        <option value="simple_user">Simple User</option>
+        <option value="advanced_user">Advanced User</option>
+        <option value="admin">Admin</option>
+    </select>
+
+    <p id="addUserError"></p>
+
+    <button type="button" id="saveNewUser">CREATE USER</button>
+    <button type="button" id="cancelAddUser">CANCEL</button>
+</div>
+        </div>
+    </section>
+<!-- Discount Management -->
+<section class="users-section" id="discounts">
+
+    <div class="section-heading">
+        <span class="section-subtitle">STYLEHUB MANAGEMENT</span>
+        <h2>Discount Management</h2>
+        <p>Create and manage product discounts.</p>
+    </div>
+
+    <div class="users-table-container">
+
+       <div class="users-table-header">
+    <h3>Product Discounts</h3>
+
+    <div>
+        <button type="button" id="addDiscountButton">
+            ADD DISCOUNT
+        </button>
+
+        <button type="button" id="refreshDiscounts">
+            REFRESH DISCOUNTS
+        </button>
+    </div>
+</div>
+
+        <div id="discountsContainer"></div>
+
+    </div>
+
+</section><!-- Add Discount -->
+<div class="product-modal-overlay" id="discountModalOverlay">
+
+    <div class="product-modal">
+
+        <div class="product-modal-header">
+            <div>
+                <span class="cart-subtitle">STYLEHUB MANAGEMENT</span>
+                <h2 id="discountModalTitle">Add Discount</h2>
+            </div>
+
+            <button type="button" id="closeDiscountModal">&times;</button>
+        </div>
+
+        <form id="discountForm">
+
+            <div class="product-form-grid">
+
+                <div class="product-form-field full-width">
+                    <label for="discountProduct">Product</label>
+                    <select id="discountProduct" required></select>
+                </div>
+
+                <div class="product-form-field">
+                    <label for="discountPercentage">Discount (%)</label>
+                    <input type="number" id="discountPercentage"
+                        min="0.01" max="100" step="0.01" required>
+                </div>
+
+                <div class="product-form-field">
+                    <label for="discountStart">Start Date</label>
+                    <input type="datetime-local" id="discountStart" required>
+                </div>
+
+                <div class="product-form-field">
+                    <label for="discountEnd">End Date</label>
+                    <input type="datetime-local" id="discountEnd" required>
+                </div>
+
+            </div>
+
+            <p id="discountError" class="product-form-error"></p>
+
+            <button type="submit" class="save-product-button">
+                SAVE DISCOUNT
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h2>STYLE<span>HUB</span></h2>
+            <p>Your style. Your choice. Your confidence.</p>
+            <p class="copyright">© 2026 StyleHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+  
+<!-- Login and Register -->
+<div class="login-overlay" id="loginOverlay">
+    <div class="login-modal">
+        <button type="button" class="close-login" id="closeLogin">&times;</button>
+
+        <span class="cart-subtitle">WELCOME TO STYLEHUB</span>
+
+        <!-- Login Form -->
+        <div id="loginSection">
+            <h2>Sign In</h2>
+            <p class="login-description">Enter your account details to access your dashboard.</p>
+
+            <form id="loginForm">
+                <div class="login-field">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                </div>
+
+                <div class="login-field">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+
+                <p id="loginError" class="login-error"></p>
+                <button type="submit" class="login-submit-button">SIGN IN</button>
+            </form>
+
+            <p class="login-description">
+                Don't have an account?
+                <a href="#" id="showRegister">Register</a>
+            </p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerSection" style="display: none;">
+            <h2>Create Account</h2>
+            <p class="login-description">Create your StyleHub account.</p>
+
+            <form id="registerForm">
+                <div class="login-field">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+
+                <div class="login-field">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+
+                <div class="login-field">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+
+                <p id="registerError" class="login-error"></p>
+                <button type="submit" class="login-submit-button">REGISTER</button>
+            </form>
+
+            <p class="login-description">
+                Already have an account?
+                <a href="#" id="showLogin">Sign In</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
