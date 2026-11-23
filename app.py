@@ -1925,7 +1925,7 @@ def client_to_dict(client):
 # GET - Retrieve all clients
 @app.route('/api/clients', methods=['GET'])
 @token_required
-@role_required('admin', 'advanced_user')
+@role_required('admin', 'advanced_user','simple_user')
 def get_clients(current_user):
 
     clients = Client.query.order_by(Client.id).all()
